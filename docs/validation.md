@@ -1,7 +1,0 @@
-# Validation — 10 November 2026
-
-- `python -m unittest discover -s tests -v`: 10 tests passed. Tests cover closed versus open zero waits, five-minute idempotency and repeated later readings, malformed data rejection, transaction rollback after an injected ride-insert failure, nested/root ride duplicates, negative waits and missing update times, isolated park failures, CSV export/example SQL, transient HTTP retries and nonretryable 404 errors.
-- A real `python main.py once` successfully retrieved the park catalog and collected 25 Thorpe Park ride records into one SQLite snapshot with the configured HTTP client. This exercised HTTP access, catalog resolution, normalization, schema creation, transactions and attempt logging together. Earlier generic urllib requests received 403; the project's client with explicit headers succeeded.
-- Separately, a public JSON response retrieved through the browser/search service was normalized, written into a temporary database and exported to CSV: 25 ride rows, one snapshot, full raw response retained.
-- Test fixtures are synthetic and clearly labeled. Test databases and the live smoke-test database are excluded from the downloadable project. There is no fabricated historical data in the deliverable.
-- No sustained unattended run, Windows Task Scheduler execution, machine restart recovery or authenticated historical-data backfill has been tested. Scheduling instructions and the PowerShell helper are provided for the user's machine. Local tests cannot guarantee future upstream availability or uninterrupted collection.
