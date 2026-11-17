@@ -11,7 +11,7 @@ import time
 import api
 from database import connect, record_attempt, save_snapshot, timestamp, utc_now
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def load_config(path):
