@@ -8,13 +8,11 @@ from urllib.parse import quote
 from databricks.sdk import WorkspaceClient
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 load_dotenv(PROJECT_ROOT / ".env")
 
-SOURCE_DB = BASE_DIR / "data" / "wait_times.sqlite3"
+SOURCE_DB = PROJECT_ROOT / "data" / "wait_times.sqlite3"
 
 DESTINATION = ("/Volumes/deng_accelerator/raw_data/sqlite_uploads/wait_times.db")
 

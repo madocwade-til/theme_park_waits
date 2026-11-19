@@ -11,7 +11,7 @@ import time
 import api
 from database import connect, record_attempt, save_snapshot, timestamp, utc_now
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent #gets the root of the overall project folder - not just the python folder
 
 
 def load_config(path):
@@ -29,30 +29,38 @@ def load_config(path):
     return config
 
 
-def setup_logging(path):
+def setup_logging(path):            #sets up the log file. The path which will be passed to this function is where the file will be saved.
     path.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
         handlers=[logging.StreamHandler(), RotatingFileHandler(
-            path, maxBytes=2_000_000, backupCount=3, encoding="utf-8")])
+            path, 
+            maxBytes=2_000_000, 
+            backupCount=3, 
+            encoding="utf-8")
+            ]
+            )
     logging.Formatter.converter = time.gmtime
 
 
-def load_catalog(db):
-    cached = db.execute("SELECT * FROM catalog_cache WHERE singleton=1").fetchone()
+def load_catalog(db):                       #This functions grabgs the parks catalog
+    cached = db.execute("SELECT * FROM catalog_cache WHERE singleton=1").fetchone() #because this is a sqlite file, we can pass it sql statements directly
     if cached:
         from datetime import datetime
         age = (utc_now() - datetime.fromisoformat(
             cached["fetched_at_utc"].replace("Z", "+00:00"))).total_seconds()
-        if age < 86400:
-            return json.loads(cached["raw_json"])
-    try:
+        if age < 86400: #one day
+            return json.loads(cached["raw_json"]) #immediately cuts the function: does not query the api if the cache is less than one day old
+    try: #only attempts this section if the cache was more than a day old, or if there was no cache at all.
         parks = api.get_parks()
         if not parks:
             raise ValueError("Empty park catalog")
         with db:
             db.execute("INSERT OR REPLACE INTO catalog_cache VALUES (1, ?, ?)",
-                       (timestamp(utc_now()), json.dumps(parks)))
+                       (timestamp(utc_now()), 
+                        json.dumps(parks)
+                        )
+                        )
         return parks
     except Exception:
         if not cached:
@@ -99,11 +107,12 @@ def export_csv(db, output):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Powered by Queue-Times.com — https://queue-times.com/")
-    parser.add_argument("command", choices=["list-parks", "once", "run", "export"])
-    parser.add_argument("--config", type=Path, default=ROOT / "config.json")
+    parser = argparse.ArgumentParser(description="Powered by Queue-Times.com — https://queue-times.com/") #set up the parser for the terminal commands
+    parser.add_argument("command", choices=["list-parks", "once", "run", "export"]) #set the possible command options as arguments
+    parser.add_argument("--config", type=Path, default=ROOT / "config.json") #tells the script where the config file is (see the config variable below)
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "wait_times.csv")
-    args = parser.parse_args()
+    args = parser.parse_args() #turns each of the arguments from the parser into an attribute on a returned args object. 
+                               #So args.command (on the line below) grabs the 'command' attribute from args, which may only be one of the four options above
     if args.command == "list-parks":
         print("Powered by Queue-Times.com — https://queue-times.com/")
         for park in api.get_parks():
