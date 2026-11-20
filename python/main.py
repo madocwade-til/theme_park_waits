@@ -96,16 +96,6 @@ def collect_once(db, config):
     return failures
 
 
-def export_csv(db, output):
-    output.parent.mkdir(parents=True, exist_ok=True)
-    cursor = db.execute("SELECT * FROM wait_times ORDER BY observed_at_utc, park_id, ride_id")
-    with output.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.writer(handle)
-        writer.writerow([column[0] for column in cursor.description])
-        writer.writerows(cursor)
-    logging.info("Exported %s", output)
-
-
 def main():
     parser = argparse.ArgumentParser(description="Powered by Queue-Times.com — https://queue-times.com/") #set up the parser for the terminal commands
     parser.add_argument("command", choices=["list-parks", "once", "run", "export"]) #set the possible command options as arguments
@@ -113,6 +103,7 @@ def main():
     parser.add_argument("--output", type=Path, default=ROOT / "data" / "wait_times.csv")
     args = parser.parse_args() #turns each of the arguments from the parser into an attribute on a returned args object. 
                                #So args.command (on the line below) grabs the 'command' attribute from args, which may only be one of the four options above
+    
     if args.command == "list-parks":
         print("Powered by Queue-Times.com — https://queue-times.com/")
         for park in api.get_parks():
@@ -123,9 +114,6 @@ def main():
     logging.info("Powered by Queue-Times.com — https://queue-times.com/")
     db = connect(config["database_path"])
     try:
-        if args.command == "export":
-            export_csv(db, args.output.resolve())
-            return 0
         if args.command == "once":
             return 1 if collect_once(db, config) else 0
         while True:

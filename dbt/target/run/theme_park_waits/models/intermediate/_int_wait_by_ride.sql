@@ -2,12 +2,12 @@
   
   
   
-  create or replace view `deng_accelerator`.`raw_data`.`_int_wait_by_ride`
+  create or replace view `deng_accelerator`.`output`.`_int_wait_by_ride`
   
   as (
     with wait_times as (
     SELECT *
-    FROM `deng_accelerator`.`raw_data`.`_stg_wait_observations`
+    FROM `deng_accelerator`.`output`.`_stg_wait_observations`
 ),
 
 avg_by_ride as (

@@ -1,17 +1,17 @@
 {
   "target_dir": "C:\\Users\\MadocWade\\Documents\\Data Engineering\\theme_park_waits\\dbt\\target",
   "fingerprints": {
-    "run_results.json": {
-      "size": 6204,
-      "modified_secs": 1795104794
-    },
-    "manifest.json": {
-      "size": 865999,
-      "modified_secs": 1795104794
-    },
     "semantic_manifest.json": {
       "size": 234,
-      "modified_secs": 1795104789
+      "modified_secs": 1795190225
+    },
+    "run_results.json": {
+      "size": 10776,
+      "modified_secs": 1795190231
+    },
+    "manifest.json": {
+      "size": 881993,
+      "modified_secs": 1795190231
     }
   },
   "write_source": "DirectWrite",

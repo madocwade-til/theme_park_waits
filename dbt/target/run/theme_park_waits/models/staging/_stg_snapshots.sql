@@ -2,7 +2,7 @@
   
   
   
-  create or replace view `deng_accelerator`.`raw_data`.`_stg_snapshots`
+  create or replace view `deng_accelerator`.`output`.`_stg_snapshots`
   
   as (
     SELECT *
