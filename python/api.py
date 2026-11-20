@@ -15,6 +15,7 @@ def get_json(path, attempts=3):
         "User-Agent": "ThemeParkWaitsResearch/0.1",
         "Accept": "application/json",
     })
+    
     for attempt in range(attempts):
         delay = 2 ** attempt
         try:
