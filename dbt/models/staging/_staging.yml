@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: _stg_wait_observations
+    columns:
+      - name: park_id
+        data_tests: 
+          - not_null
+          - consistent_ids:
+              arguments:
+                name_column: park_name
