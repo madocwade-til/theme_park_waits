@@ -1,2 +1,2 @@
 SELECT *
-FROM `deng_accelerator`.`raw_data`.`snapshots`
+FROM deng_accelerator.raw_data.snapshots

@@ -7,9 +7,9 @@ import unittest
 from unittest.mock import patch
 from urllib.error import HTTPError
 
-import python.api as api
-from python.database import connect, normalize_rides, save_snapshot
-from python.main import collect_once, export_csv
+import api as api
+from database import connect, normalize_rides, save_snapshot
+from main import collect_once
 
 PARK = {"id": 2, "name": "Test Park", "country": "Test Country",
         "timezone": "Europe/London"}

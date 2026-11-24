@@ -1,91 +1,91 @@
+import os
 import sqlite3
 import tempfile
 from contextlib import closing
 from pathlib import Path
-import requests
-from urllib.parse import quote
 
-from databricks.sdk import WorkspaceClient
+import pandas as pd
+import snowflake.connector
 from dotenv import load_dotenv
+from snowflake.connector.pandas_tools import write_pandas
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-load_dotenv(PROJECT_ROOT / ".env")
-
 SOURCE_DB = PROJECT_ROOT / "data" / "wait_times.sqlite3"
 
-DESTINATION = ("/Volumes/deng_accelerator/raw_data/sqlite_uploads/wait_times.db")
+TABLES = (
+    "parks",
+    "catalog_cache",
+    "snapshots",
+    "wait_observations",
+    "poll_attempts",
+)
+
 
 def main():
+    load_dotenv(PROJECT_ROOT / ".env") #load env variables
+
     if not SOURCE_DB.is_file():
         raise FileNotFoundError(f"Database not found: {SOURCE_DB}")
 
-    client = WorkspaceClient() #initializes a client using our env variables
-    print("Connected as:", client.current_user.me().user_name)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        snapshot = Path(temp_dir) / "wait_times.db"
+        source_uri = SOURCE_DB.resolve().as_uri() + "?mode=ro" #read-only
 
-    print("Checking destination...")
+        # Take a consistent backup while the collector can keep running.
+        with (
+            closing(sqlite3.connect(source_uri, uri=True)) as source,
+            closing(sqlite3.connect(snapshot)) as backup,
+        ):
+            source.backup(backup) #copies the entire database into backup
 
-    for item in client.files.list_directory_contents(
-        "/Volumes/deng_accelerator/raw_data/sqlite_uploads"
-    ):
-        print(item.path)
+        with (
+            closing(sqlite3.connect(snapshot)) as sqlite_conn,
+            snowflake.connector.connect( #connects to snowflake!!
+                account=os.environ["SNOWFLAKE_ACCOUNT"],
+                user=os.environ["SNOWFLAKE_USER"],
+                password=os.environ["SNOWFLAKE_PASSWORD"],
+                warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
+                database=os.environ["SNOWFLAKE_DATABASE"],
+                schema=os.environ["SNOWFLAKE_SCHEMA"],
+                role=os.environ["SNOWFLAKE_ROLE"],
+            ) as snowflake_conn,
+        ):
+            with snowflake_conn.cursor() as cursor: #cursor is an object that manipulates/retrieves data
+                cursor.execute("""
+                    SELECT table_name
+                    FROM information_schema.tables
+                    WHERE table_schema = CURRENT_SCHEMA()
+                """)
+                existing_tables = {name for (name,) in cursor.fetchall()}
 
-    print("Destination listing succeeded")
+            for table in TABLES:
+                df = pd.read_sql_query(f'SELECT * FROM "{table}"', sqlite_conn)
+                df.columns = df.columns.str.upper()
 
-    with tempfile.TemporaryDirectory() as temp_dir: #define a temporary directory
-        snapshot = Path(temp_dir) / "wait_times.db" #local backup file
+                target = table.upper()
+                table_exists = target in existing_tables
 
-        source_uri = SOURCE_DB.resolve().as_uri() + "?mode=ro" #opens a read-only copy of the original db
+                if df.empty and not table_exists:
+                    raise RuntimeError(
+                        f"{table} is empty. Create {target} in Snowflake "
+                        "with explicit column types or run again once it has data."
+                    )
 
-        with closing(
-            sqlite3.connect(source_uri, uri=True)
-        ) as source:
+                success, _, rows_loaded, _ = write_pandas(
+                    snowflake_conn,
+                    df,
+                    table_name=target,
+                    auto_create_table=not table_exists,
+                    overwrite=table_exists,
+                )
 
-            with closing(
-                sqlite3.connect(snapshot)
-            ) as target:
+                if not success or rows_loaded != len(df):
+                    raise RuntimeError(
+                        f"{target}: loaded {rows_loaded:,} of {len(df):,} rows"
+                    )
 
-                source.backup(target) #copies the contents of source into our backup file
+                print(f"{target}: loaded {rows_loaded:,} rows")
 
-        #with snapshot.open("rb") as contents: #'rb' is for 'read binary'
-            #client.files.upload(
-                #file_path=DESTINATION,
-                #contents=contents,
-                #overwrite=True,
-            #)
-        
-        file_size = snapshot.stat().st_size
-        print(f"Uploading {file_size / 1024 / 1024:.2f} MB...")
-
-        url = (
-            client.config.host.rstrip("/")
-            + "/api/2.0/fs/files"
-            + quote(DESTINATION, safe="/")
-        )
-
-        headers = dict(client.config.authenticate())
-        headers["Content-Type"] = "application/octet-stream"
-        headers["Content-Length"] = str(file_size)
-
-        with snapshot.open("rb") as contents:
-            response = requests.put(
-                url,
-                headers=headers,
-                params={"overwrite": "true"},
-                data=contents,
-                timeout=(15, 120),
-            )
-
-        print("Upload status:", response.status_code)
-
-        if not response.ok:
-            print(response.text)
-
-        response.raise_for_status()
-        print(f"Uploaded database to {DESTINATION}")
-
-
-        
 
 if __name__ == "__main__":
     main()

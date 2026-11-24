@@ -2,7 +2,7 @@ name: 'theme_park_waits'
 version: '1.0.0'
 config-version: 2
 
-profile: 'theme_park_waits'
+profile: 'deng_accelerator'
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]

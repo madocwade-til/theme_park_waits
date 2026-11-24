@@ -21,8 +21,8 @@
         },
         "stop": {
           "line": 3,
-          "col": 62,
-          "index": 164
+          "col": 56,
+          "index": 158
         }
       }
     },
@@ -43,12 +43,12 @@
         "start": {
           "line": 4,
           "col": 15,
-          "index": 182
+          "index": 176
         },
         "stop": {
           "line": 4,
-          "col": 59,
-          "index": 226
+          "col": 53,
+          "index": 214
         }
       }
     }

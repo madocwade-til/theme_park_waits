@@ -1,19 +1,22 @@
 
+  create or replace   view DENG_ACCELERATOR.TABLES._stg_wait_observations
   
   
   
-  create or replace view `deng_accelerator`.`output`.`_stg_wait_observations`
   
   as (
-    SELECT
+    
+
+SELECT
 snapshot_id,
 ride_id,
 ride_name,
-land_id as park_id,
-land_name as park_name,
+land_id,
+land_name,
 is_open,
 reported_wait_minutes,
 source_updated_at_utc
 
-FROM `deng_accelerator`.`raw_data`.`wait_observations`
-  )
+FROM deng_accelerator.raw_data.wait_observations
+  );
+

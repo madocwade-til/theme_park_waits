@@ -1,6 +1,6 @@
 with parks as (
     SELECT *
-    FROM `deng_accelerator`.`output`.`_stg_parks`
+    FROM DENG_ACCELERATOR.TABLES._stg_parks
 ),
 
 

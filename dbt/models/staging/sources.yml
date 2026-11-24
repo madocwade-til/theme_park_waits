@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: wait_times
-    description: "Parsed data tables for deng accelerator in databricks."
+    description: "Parsed data tables for deng accelerator in snowflake."
     database: deng_accelerator
     schema: raw_data
 

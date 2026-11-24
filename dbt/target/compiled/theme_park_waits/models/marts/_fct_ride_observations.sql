@@ -1,0 +1,2 @@
+SELECT *
+FROM DENG_ACCELERATOR.TABLES._int_ride_parks

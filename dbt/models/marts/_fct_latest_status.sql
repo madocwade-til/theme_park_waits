@@ -4,7 +4,7 @@ with ranked_data as (
         PARTITION BY ride_id
         ORDER BY snapshot_id desc
     ) AS rn
-    FROM {{ref('_stg_wait_observations')}}
+    FROM {{ref('_int_ride_parks')}}
 ),
 
 latest_status as (
@@ -13,5 +13,5 @@ latest_status as (
     WHERE rn = 1
 )
 
-SELECT *
+SELECT ride_id, land_id, park_id, is_open
 FROM latest_status

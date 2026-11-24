@@ -5,24 +5,24 @@
         "start": {
           "line": 3,
           "col": 10,
-          "index": 38
+          "index": 40
         },
         "stop": {
           "line": 3,
           "col": 31,
-          "index": 59
+          "index": 61
         }
       },
       "expanded_span": {
         "start": {
           "line": 3,
           "col": 10,
-          "index": 38
+          "index": 40
         },
         "stop": {
           "line": 3,
-          "col": 50,
-          "index": 78
+          "col": 44,
+          "index": 74
         }
       }
     }

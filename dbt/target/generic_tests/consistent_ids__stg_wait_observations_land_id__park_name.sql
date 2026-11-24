@@ -1,0 +1,1 @@
+{{ test_consistent_ids(column_name="land_id", model=get_where_subquery(ref('_stg_wait_observations')), name_column="park_name") }}

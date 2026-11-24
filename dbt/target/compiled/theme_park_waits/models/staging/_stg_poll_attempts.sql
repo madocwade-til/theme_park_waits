@@ -1,2 +1,2 @@
 SELECT *
-FROM `deng_accelerator`.`raw_data`.`poll_attempts`
+FROM deng_accelerator.raw_data.poll_attempts

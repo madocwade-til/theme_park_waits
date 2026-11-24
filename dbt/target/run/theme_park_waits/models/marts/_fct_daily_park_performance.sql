@@ -1,31 +1,25 @@
 
   
     
-        create or replace table `deng_accelerator`.`output`.`_fct_daily_park_performance`
-      
-      
+
+
+
+create or replace transient  table DENG_ACCELERATOR.TABLES._fct_daily_park_performance
     
-      using delta
     
-  
-      
-      
-      
-      
-      
-      
-      
-      
-      as
-      with parks as (
-    SELECT
-    FROM `deng_accelerator`.`output`.`_stg_parks`
+    
+    
+    as (with parks as (
+    SELECT *
+    FROM DENG_ACCELERATOR.TABLES._stg_parks
 ),
 
-daily_summary as (
-    SELECT
-    FROM 
-)
+
 
 SELECT * FROM daily_summary
+    )
+;
+
+
+
   
