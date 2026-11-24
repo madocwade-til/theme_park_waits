@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="collection_date_utc", model=get_where_subquery(ref('_fct_daily_collection_health'))) }}

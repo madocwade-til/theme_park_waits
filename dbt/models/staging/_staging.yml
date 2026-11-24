@@ -1,7 +1,53 @@
 version: 2
 
 models:
+  - name: _stg_poll_attempts
+    columns:
+      - name: attempt_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: park_id
+        data_tests:
+          - not_null
+
+      - name: poll_slot
+        data_tests:
+          - not_null
+
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['success', 'failed', 'skipped']
+
+  - name: _stg_snapshots
+    columns:
+      - name: snapshot_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: park_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('_stg_parks')
+                field: park_id
+
+      - name: poll_slot
+        data_tests:
+          - not_null
+
   - name: _stg_wait_observations
     columns:
-      - name: land_id
-  
+      - name: snapshot_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('_stg_snapshots')
+                field: snapshot_id

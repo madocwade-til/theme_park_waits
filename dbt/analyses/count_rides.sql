@@ -7,7 +7,7 @@ with stg_count as (
 int_count as (
     SELECT 
     COUNT(DISTINCT ride_id) as int_count
-    FROM {{ref('_int_wait_by_ride')}}
+    FROM {{ref('_int_ride_parks')}}
 )
 
 SELECT

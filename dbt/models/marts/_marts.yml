@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: _fct_daily_collection_health
+    columns:
+      - name: park_id
+        data_tests:
+          - not_null
+
+      - name: collection_date_utc
+        data_tests:
+          - not_null

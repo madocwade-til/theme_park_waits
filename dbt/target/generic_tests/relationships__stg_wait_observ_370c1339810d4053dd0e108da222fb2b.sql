@@ -1,0 +1,1 @@
+{{ test_relationships(column_name="snapshot_id", field="snapshot_id", model=get_where_subquery(ref('_stg_wait_observations')), to=ref('_stg_snapshots')) }}

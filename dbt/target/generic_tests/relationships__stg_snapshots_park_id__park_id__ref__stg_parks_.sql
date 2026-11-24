@@ -1,0 +1,1 @@
+{{ test_relationships(column_name="park_id", field="park_id", model=get_where_subquery(ref('_stg_snapshots')), to=ref('_stg_parks')) }}

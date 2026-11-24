@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="attempt_id", model=get_where_subquery(ref('_stg_poll_attempts'))) }}

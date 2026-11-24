@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="status", model=get_where_subquery(ref('_stg_poll_attempts')), values=["success","failed","skipped"]) }}

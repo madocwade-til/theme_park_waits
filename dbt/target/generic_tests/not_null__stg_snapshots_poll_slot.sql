@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="poll_slot", model=get_where_subquery(ref('_stg_snapshots'))) }}

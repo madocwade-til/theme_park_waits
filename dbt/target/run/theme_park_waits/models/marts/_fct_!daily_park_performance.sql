@@ -9,14 +9,16 @@ create or replace transient  table DENG_ACCELERATOR.TABLES._fct_!daily_park_perf
     
     
     
-    as (with parks as (
+    as (with obs as (
     SELECT *
-    FROM DENG_ACCELERATOR.TABLES._stg_parks
+    FROM DENG_ACCELERATOR.TABLES._int_ride_parks
 ),
 
 
 
-SELECT * FROM daily_summary
+
+
+SELECT park_id, land_id, ride_id, AVG() FROM 
     )
 ;
 

@@ -1,0 +1,1 @@
+{{ test_unique(column_name="snapshot_id", model=get_where_subquery(ref('_stg_snapshots'))) }}
