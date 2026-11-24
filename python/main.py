@@ -1,4 +1,4 @@
-"""Run: python main.py list-parks | once | run | export."""
+"""Run: python main.py list-parks | once | run """
 import argparse
 import csv
 import json
@@ -14,12 +14,12 @@ from database import connect, record_attempt, save_snapshot, timestamp, utc_now
 ROOT = Path(__file__).resolve().parent.parent #gets the root of the overall project folder - not just the python folder
 
 
-def load_config(path):
-    config = json.loads(path.read_text(encoding="utf-8"))
+def load_config(path): #loads our config file. This is invoked using root/config.json
+    config = json.loads(path.read_text(encoding="utf-8")) 
     ids = config["park_ids"]
-    if not ids or any(type(x) is not int or x <= 0 for x in ids):
+    if not ids or any(type(x) is not int or x <= 0 for x in ids): #tests that all the park_id are positive and whole numbers
         raise ValueError("park_ids must contain positive integer park ids")
-    if len(ids) != len(set(ids)):
+    if len(ids) != len(set(ids)): #tests for duplicates
         raise ValueError("park_ids contains duplicates")
     interval = config["interval_seconds"]
     if type(interval) is not int or interval < 300 or interval % 300:
@@ -57,8 +57,8 @@ def load_catalog(db):                       #This functions grabgs the parks cat
             raise ValueError("Empty park catalog")
         with db:
             db.execute("INSERT OR REPLACE INTO catalog_cache VALUES (1, ?, ?)",
-                       (timestamp(utc_now()), 
-                        json.dumps(parks)
+                       (timestamp(utc_now()), #binds to the first '?'
+                        json.dumps(parks) #binds to the second '?'
                         )
                         )
         return parks

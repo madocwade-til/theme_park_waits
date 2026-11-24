@@ -36,7 +36,7 @@ def main():
             closing(sqlite3.connect(source_uri, uri=True)) as source,
             closing(sqlite3.connect(snapshot)) as backup,
         ):
-            source.backup(backup) #copies the entire database into backup
+            source.backup(backup) #copies the entire database into backup -> we will upload this
 
         with (
             closing(sqlite3.connect(snapshot)) as sqlite_conn,
@@ -58,7 +58,7 @@ def main():
                 """)
                 existing_tables = {name for (name,) in cursor.fetchall()}
 
-            for table in TABLES:
+            for table in TABLES: #fixed list -> if the data coming in from the api changed this would only capture the existing rows
                 df = pd.read_sql_query(f'SELECT * FROM "{table}"', sqlite_conn)
                 df.columns = df.columns.str.upper()
 
@@ -71,7 +71,7 @@ def main():
                         "with explicit column types or run again once it has data."
                     )
 
-                success, _, rows_loaded, _ = write_pandas(
+                success, _, rows_loaded, _ = write_pandas( #grabs two of the returned values from write_pandas. The other two are dropped
                     snowflake_conn,
                     df,
                     table_name=target,
